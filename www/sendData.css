@@ -2,3 +2,29 @@
   border: solid rgb(125,20,60) 2px;
   padding: 2px;
 }
+
+form {
+  position: relative;
+  margin: 20px;
+  padding: 10px;
+  width: 35%;
+  height: 500px;
+  border: solid black 1px;
+  border-radius: 5px;
+  background-color: rgb(255,255,224);
+  float: left;
+}
+
+form div {
+  padding: 10px;
+  width: 100%;
+  font-weight: 700;
+  font-size: 1.15em;
+  border-bottom: inherit;
+}
+
+input[type="submit"] {
+  position: absolute;
+  bottom: 30px;
+  left: 10px;
+}

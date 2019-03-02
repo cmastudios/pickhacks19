@@ -16,4 +16,11 @@
   width: 100%;
   border-top: inherit;
   padding-top: inherit;
+  text-align: left;
+}
+
+table, table * {
+  border: solid black 1px;
+  padding: 5px;
+  text-align: left;
 }

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="style.css" type="text/css" rel="stylesheet">
     <link href="progress.css" type="text/css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
   </head>
 
   <body>
@@ -17,11 +18,13 @@
       <span id="title">Flex</span>
       <br>
       <span id="links">
-        <span id="myProgress"><a>My Progress</a></span>
+        <span id="home"><a href="https://pickhacks19.firebaseapp.com">Home</a></span>
         &middot
-        <span id="exercises"><a>Exercises</a></span>
+        <span id="myProgress">My Progress</span>
         &middot
-        <span id="sendData"><a>Send Data</a></span>
+        <span id="exercises"><a href="https://pickhacks19.firebaseapp.com/exercises.html">Exercises</a></span>
+        &middot
+        <span id="sendData"><a href="https://pickhacks19.firebaseapp.com/sendData.html">Send Data</a></span>
       </span>
     </nav>
 
@@ -32,18 +35,122 @@
       <div class="row">
         <div class="col-sm">
           <a><h1>Shoulder</h1></a>
-          <p class="data">stuff</p>
+          <h3 class="data">Data Summary:</h3>
+          <table>
+            <tr>
+              <th>Exercise:</th>
+              <th>Arm Lifts</th>
+            </tr>
+            <tr>
+              <td>Date started:</td>
+              <td id="armStartDate">Loading...</td>
+            </tr>
+            <tr>
+              <td>Current goal:</td>
+              <td id="armGoal">Loading...</td>
+            </tr>
+            <tr>
+              <td>Initial baseline:</td>
+              <td id="armInitBaseline">Loading...</td>
+            </tr>
+            <tr>
+              <td>Current baseline:</td>
+              <td id="armCurrBaseline">Loading...</td>
+            </tr>
+            <tr>
+              <td>Total number of reps:</td>
+              <td id="armNumReps">Loading...</td>
+            </tr>
+            <tr>
+              <td>Pace of Improvement:</td>
+              <td id="armCurrentImprovement">Loading...</td>
+            </tr>
+            <tr>
+              <td>Overall improvement:</td>
+              <td id="armOverallImprovement">Loading...</td>
+            </tr>
+          </table>
         </div>
         <div class="col-sm">
           <a><h1>Hip</h1></a>
-          <p class="data">stuff</p>
+          <h3 class="data">Data Summary:</h3>
+          <table>
+            <tr>
+              <th>Exercise:</th>
+              <th>Leg Lifts</th>
+            </tr>
+            <tr>
+              <td>Date started:</td>
+              <td id="legStartDate">Loading...</td>
+            </tr>
+            <tr>
+              <td>Current goal:</td>
+              <td id="legGoal">Loading...</td>
+            </tr>
+            <tr>
+              <td>Initial baseline:</td>
+              <td id="legInitBaseline">Loading...</td>
+            </tr>
+            <tr>
+              <td>Current baseline:</td>
+              <td id="legCurrBaseline">Loading...</td>
+            </tr>
+            <tr>
+              <td>Total number of reps:</td>
+              <td id="legNumReps">Loading...</td>
+            </tr>
+            <tr>
+              <td>Pace of Improvement:</td>
+              <td id="legCurrentImprovement">Loading...</td>
+            </tr>
+            <tr>
+              <td>Overall improvement:</td>
+              <td id="legOverallImprovement">Loading...</td>
+            </tr>
+          </table>
         </div>
         <div class="col-sm">
           <a><h1>Back</h1></a>
-          <p class="data">stuff</p>
+          <h3 class="data">Data Summary:</h3>
+          <table>
+            <tr>
+              <th>Exercise:</th>
+              <th>Toe Touches</th>
+            </tr>
+            <tr>
+              <td>Date started:</td>
+              <td id="backStartDate">Loading...</td>
+            </tr>
+            <tr>
+              <td>Current goal:</td>
+              <td id="backGoal">Loading...</td>
+            </tr>
+            <tr>
+              <td>Initial baseline:</td>
+              <td id="backInitBaseline">Loading...</td>
+            </tr>
+            <tr>
+              <td>Current baseline:</td>
+              <td id="backCurrBaseline">Loading...</td>
+            </tr>
+            <tr>
+              <td>Total number of reps:</td>
+              <td id="backNumReps">Loading...</td>
+            </tr>
+            <tr>
+              <td>Pace of Improvement:</td>
+              <td id="backCurrentImprovement">Loading...</td>
+            </tr>
+            <tr>
+              <td>Overall improvement:</td>
+              <td id="backOverallImprovement">Loading...</td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
+
+    <script src="script.js"></script>
 
   </body>
 

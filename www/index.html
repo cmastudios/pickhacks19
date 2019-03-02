@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="style.css" type="text/css" rel="stylesheet">
     <link href="website.css" type="text/css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
   </head>
 
   <body>
@@ -17,11 +18,13 @@
       <span id="title">Flex</span>
       <br>
       <span id="links">
-        <span id="myProgress"><a>My Progress</a></span>
+        <span id="home">Home</span>
         &middot
-        <span id="exercises"><a>Exercises</a></span>
+        <span id="myProgress"><a href="https://pickhacks19.firebaseapp.com/progress.html">My Progress</a></span>
         &middot
-        <span id="sendData"><a>Send Data</a></span>
+        <span id="exercises"><a href="https://pickhacks19.firebaseapp.com/exercises.html">Exercises</a></span>
+        &middot
+        <span id="sendData"><a href="https://pickhacks19.firebaseapp.com/sendData.html">Send Data</a></span>
       </span>
     </nav>
 
@@ -35,19 +38,7 @@
 
     <img src="stretch.jpg" alt="man stretching" width="568" height="400" />
 
-    <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
-    <script>
-      // Initialize Firebase
-      var config = {
-        apiKey: "AIzaSyA36BfvzD5FwJP1y7JmjkHHWtWhuwOGFr0",
-        authDomain: "pickhacks19.firebaseapp.com",
-        databaseURL: "https://pickhacks19.firebaseio.com",
-        projectId: "pickhacks19",
-        storageBucket: "pickhacks19.appspot.com",
-        messagingSenderId: "624383403076"
-      };
-      firebase.initializeApp(config);
-    </script>
+    <script src="script.js"></script>
 
   </body>
 
