@@ -25,6 +25,14 @@ body {
   color: rgb(100,100,100);
 }
 
+a {
+  color: inherit;
+}
+
+a:hover {
+  color: rgb(255,215,0);
+}
+
 #title {
   display: inline-block;
   font-weight: 700;
