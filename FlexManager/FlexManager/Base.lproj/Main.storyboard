@@ -206,6 +206,9 @@
                                 </attributes>
                             </fragment>
                         </attributedString>
+                        <connections>
+                            <action selector="onRefresh:" destination="N7s-qE-EeX" eventType="valueChanged" id="yCS-RT-Czn"/>
+                        </connections>
                     </refreshControl>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="s10-sG-7gs" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -44,7 +44,7 @@ class LoginController : UIViewController, UITextFieldDelegate {
             return
         }
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
-            guard let auth = result else {
+            guard result != nil else {
                 let alert = UIAlertController(title: "Failed to log in", message: error?.localizedDescription ?? "Unknown error", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
@@ -62,7 +62,7 @@ class LoginController : UIViewController, UITextFieldDelegate {
             return
         }
         Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-            guard let auth = result else {
+            guard result != nil else {
                 let alert = UIAlertController(title: "Failed to create account", message: error?.localizedDescription ?? "Unknown error", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
@@ -119,23 +119,51 @@ class Exercises: UITableViewController {
     var exercisesToday : [Exercise] = []
     var exercisesPast : [Exercise] = []
     
+    func loadExercises() {
+        refreshControl?.beginRefreshing()
+        exercisesToday = []
+        exercisesPast = []
+        guard let myUserId = Auth.auth().currentUser?.uid else {
+            return
+        }
+        Database.database().reference().child("users").child(myUserId).child("exercises")
+            .observeSingleEvent(of: .value) { (snapshot) in
+                for exercise in snapshot.children.allObjects as! [DataSnapshot] {
+                    let name = exercise.key
+                    for schedule in exercise.children.allObjects as! [DataSnapshot] {
+                        let time = UInt64(schedule.key) ?? 0
+                        let completed = schedule.childSnapshot(forPath: "complete").value as? Bool
+                        let e = Exercise(fromParams: name, datetime: time)
+                        if (completed == true) {
+                            e.completed = true
+                        }
+                        let date = Date(timeIntervalSince1970: TimeInterval(e.datetime))
+                        if abs(date.timeIntervalSinceNow) < 86400 {
+                            self.exercisesToday.append(e)
+                        } else {
+                            self.exercisesPast.append(e)
+                        }
+                    }
+                }
+                self.tableView.reloadData()
+                self.refreshControl?.endRefreshing()
+        }
+    }
+    
+    @IBAction func onRefresh(_ sender: Any) {
+        loadExercises()
+    }
     
     override func viewWillAppear(_ animated: Bool) {
-        for e in elist {
-            let date = Date(timeIntervalSince1970: TimeInterval(e.datetime))
-            if abs(date.timeIntervalSinceNow) < 86400 {
-                exercisesToday.append(e)
-            } else {
-                exercisesPast.append(e)
-            }
-        }
-        
+        loadExercises()
         super.viewWillAppear(animated)
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
+    
+    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
@@ -246,7 +274,7 @@ class MeasurementViewController : UIViewController, UIPickerViewDelegate, UIPick
     @IBAction func onLogout(_ sender: Any) {
         do {
             try Auth.auth().signOut()
-        } catch let signoutError {
+        } catch _ {
             print("your bad")
         }
         self.performSegue(withIdentifier: "unwindToLogin", sender: self)
@@ -290,12 +318,12 @@ func startTakingMeasurement() {
             print("statusCode should be 2xx, but is \(response.statusCode)")
             print("response = \(response)")
             let responseString = String(data: data, encoding: .utf8)
-            print("responseString = \(responseString)")
+            print("responseString = \(String(describing: responseString))")
             return
         }
         
         let responseString = String(data: data, encoding: .utf8)
-        print("responseString = \(responseString)")
+        print("responseString = \(String(describing: responseString))")
     }
     
     task.resume()
@@ -326,12 +354,12 @@ func stopTakingMeasurement() {
             print("statusCode should be 2xx, but is \(response.statusCode)")
             print("response = \(response)")
             let responseString = String(data: data, encoding: .utf8)
-            print("responseString = \(responseString)")
+            print("responseString = \(String(describing: responseString))")
             return
         }
         
         let responseString = String(data: data, encoding: .utf8)
-        print("responseString = \(responseString)")
+        print("responseString = \(String(describing: responseString))")
     }
     
     task.resume()
