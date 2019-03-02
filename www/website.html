@@ -9,31 +9,46 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="style.css" type="text/css" rel="stylesheet">
     <link href="website.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Mukta" rel="stylesheet"> 
   </head>
 
   <body>
 
-    <nav id="header">
-      <span id="title">Flex</span>
-      <br>
-      <span id="links">
-        <span id="myProgress"><a>My Progress</a></span>
+    <nav id="header" class = "lightbox">
+       <span id="links">
+        <span id="myProgress"><a href ="progress.html">My Progress</a></span>
         &middot
-        <span id="exercises"><a>Exercises</a></span>
+        <span id="exercises"><a href = "exercises.html">Exercises</a></span>
         &middot
-        <span id="sendData"><a>Send Data</a></span>
+        <span id="sendData"><a href = "sendData.html">Send Data</a></span>
       </span>
     </nav>
 
     <div id="spacer">
     </div>
+     <div id = "flexmandiv">
+    <img id = "flexman" src="flex.png" alt="man stretching" />
+  </div>
 
-    <div class="content-left">
-      <h1>Mission Statement</h1>
-      <p>stuff</p>
+    <div id = "missionheader">
+       <h1> Mission Statement</h1>   
+</div>
+<div>
+       <img src = "theman.png" id = "theman" alt ="The man" style= "height:200px; width: auto" ;/>
+     <p class = "alightleft"> Flex uses specially calibrated technology in order to take baseline measurements of your range of motion, set goals, and track your physical abilities over time. </p>
+   </div>
+   <div>
+       <img src = "phone.png" id = "thephone" alt = "A phone" style = "height: 200px; width: auto"; />
+      <p class = "alightright"> Flex allows you to track your therapist-prescribed exercises and makes sure that you stay on your path to recovery.</p>
     </div>
 
-    <img src="stretch.jpg" alt="man stretching" width="568" height="400" />
+  </div>
+
+    <div>
+    <img id = "ladystretching" src="ladystretching.jpg" alt="Lady stretching"/>
+  </div>
+
+  </div>
 
     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
     <script>

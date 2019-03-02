@@ -1,0 +1,109 @@
+#myProgress {
+	border: solid rgb(125, 20, 60) 2 px;
+	padding: 2px;
+}
+
+.imgheader {
+    text-align: center;
+    font-family: 'Mukta', sans-serif;
+
+}
+#theman {
+ display: block;
+float: left;
+}
+
+#thephone {
+  display: block;
+ float: right;
+}
+.lightbox{
+    -webkit-stroke-width: 5.3px;
+      -webkit-stroke-color: #FFFFFF;
+      -webkit-fill-color: #FFFFFF;
+      text-shadow: 1px 0px 20px yellow;
+}
+.relative {
+  position: relative;
+}
+.child {
+  position: absolute;
+}
+.alignleft {
+  float: left;
+  font-family: 'Mukta', sans-serif;
+  padding:  = 33%
+}
+.alignright {
+  float: right;
+  font-family: 'Mukta', sans-serif;
+  padding = 33%
+}
+
+#flexmandiv {
+  background-color = white;
+  width: auto;
+  height: 650px;
+}
+
+#flexman {
+ display: block;
+ margin-left: auto;
+ margin-right: auto;
+ width:auto;
+ height:600px; 
+ line-height: 650px;
+}
+
+.container {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+#ladystretching {
+ display: block;
+ margin-left: auto;
+ margin-right: auto;
+ width: auto;
+ height: 700px; 
+}
+#whatisflexheader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Mukta', sans-serif;
+}
+
+#missionheader {
+overflow: auto;
+background-color: white;
+text-align: center;
+font-family: 'Mukta', sans-serif;
+}
+
+#missionstatement {
+  text-align: center;
+  font-family: 'Mukta', sans-serif;
+}
+
+#header {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100px;
+  line-height: 100px;
+  border-bottom: none;
+  background-color: rgb(135,206,250);
+  font-family: 'Mukta', sans-serif;
+  font-size: 20px;
+}
+
+
+
+
+
+
+
