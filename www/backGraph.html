@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="style.css" type="text/css" rel="stylesheet">
-    <link href="sendData.css" type="text/css" rel="stylesheet">
+    <link href="graph.css" type="text/css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
   </head>
 
   <body>
@@ -20,42 +21,19 @@
       <span id="links">
         <span id="home"><a href="https://pickhacks19.firebaseapp.com">Home</a></span>
         &middot
-        <span id="myProgress"><a href="https://pickhacks19.firebaseapp.com/progress.html">My Progress</a></span>
+        <span id="myProgress"><a href ="progress.html">My Progress</a></span>
         &middot
         <span id="exercises"><a href="https://pickhacks19.firebaseapp.com/exercises.html">Exercises</a></span>
         &middot
-        <span id="sendData">Send Data</span>
+        <span id="sendData"><a href="https://pickhacks19.firebaseapp.com/sendData.html">Send Data</a></span>
       </span>
     </nav>
 
     <div id="spacer">
     </div>
 
-    <form id="form1">
-      <div>Send your latest data to <span id="doctor">your medical professional</span></div>
-      <br>
-      <em>Which data would you like to send?</em>
-      <br>
-      <label>Exercise1</label>
-      <input type="checkbox" name="exercise" value="exercise1" />
-      <br>
-      <label>Exercise2</label>
-      <input type="checkbox" name="exercise" value="exercise2" />
-      <br>
-      <label>Exercise3</label>
-      <input type="checkbox" name="exercise" value="exercise3" />
-      <br>
-      <label>Exercise4</label>
-      <input type="checkbox" name="exercise" value="exercise4" />
-      <br>
-      <label>Exercise5</label>
-      <input type="checkbox" name="exercise" value="exercise5" />
-      <br>
-      <em>Comments for your doctor:</em>
-      <br>
-      <textarea name="text" cols="30" rows="4"></textarea>
-      <input type="submit" />
-    </form>
+    <canvas id="backChart1" width="300" height="100"></canvas>
+    <canvas id="backChart2" width="300" height="100"></canvas>
 
     <script src="script.js"></script>
 

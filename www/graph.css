@@ -1,0 +1,11 @@
+body {
+  background-color: white;
+}
+
+#spacer {
+  height: 120px;
+}
+
+canvas {
+  padding: 10px;
+}
