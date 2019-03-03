@@ -1,0 +1,184 @@
+diff --git a/www/armGraph.html b/www/armGraph.html
+index c412521..bced87c 100644
+--- a/www/armGraph.html
++++ b/www/armGraph.html
+@@ -11,6 +11,8 @@
+     <link href="graph.css" type="text/css" rel="stylesheet">
+     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
++    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
++<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+   </head>
+ 
+   <body>
+@@ -31,6 +33,8 @@
+ 
+     <div id="spacer">
+     </div>
++    <div id="firebaseui-auth-container"></div>
++<div id="loader">Loading...</div>
+ 
+     <canvas id="armChart1" width="300" height="100"></canvas>
+     <canvas id="armChart2" width="300" height="100"></canvas>
+diff --git a/www/backGraph.html b/www/backGraph.html
+index 3c1344e..a80fa1d 100644
+--- a/www/backGraph.html
++++ b/www/backGraph.html
+@@ -11,6 +11,8 @@
+     <link href="graph.css" type="text/css" rel="stylesheet">
+     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
++    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
++<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+   </head>
+ 
+   <body>
+@@ -31,6 +33,8 @@
+ 
+     <div id="spacer">
+     </div>
++    <div id="firebaseui-auth-container"></div>
++<div id="loader">Loading...</div>
+ 
+     <canvas id="backChart1" width="300" height="100"></canvas>
+     <canvas id="backChart2" width="300" height="100"></canvas>
+diff --git a/www/legGraph.html b/www/legGraph.html
+index 353cd0f..cc01c1f 100644
+--- a/www/legGraph.html
++++ b/www/legGraph.html
+@@ -11,6 +11,8 @@
+     <link href="graph.css" type="text/css" rel="stylesheet">
+     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
++    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
++<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+   </head>
+ 
+   <body>
+@@ -31,6 +33,8 @@
+ 
+     <div id="spacer">
+     </div>
++    <div id="firebaseui-auth-container"></div>
++<div id="loader">Loading...</div>
+ 
+     <canvas id="legChart1" width="300" height="100"></canvas>
+     <canvas id="legChart2" width="300" height="100"></canvas>
+diff --git a/www/progress.html b/www/progress.html
+index 766dcf7..134b8fe 100644
+--- a/www/progress.html
++++ b/www/progress.html
+@@ -10,6 +10,8 @@
+     <link href="style.css" type="text/css" rel="stylesheet">
+     <link href="progress.css" type="text/css" rel="stylesheet">
+     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
++    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
++<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+   </head>
+ 
+   <body>
+@@ -31,6 +33,10 @@
+     <div id="spacer">
+     </div>
+ 
++    <div id="firebaseui-auth-container"></div>
++<div id="loader">Loading...</div>
++
++
+     <div class="container">
+       <div class="row">
+         <div class="col-sm">
+diff --git a/www/script.js b/www/script.js
+index 740b4ad..e1afcf1 100644
+--- a/www/script.js
++++ b/www/script.js
+@@ -9,13 +9,40 @@ var config = {
+ };
+ 
+ firebase.initializeApp(config);
++// Initialize the FirebaseUI Widget using Firebase.
++var ui = new firebaseui.auth.AuthUI(firebase.auth());
++ui.start('#firebaseui-auth-container', {
++  signInOptions: [
++    firebase.auth.EmailAuthProvider.PROVIDER_ID
++  ],
++  callbacks: {
++    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
++      // User successfully signed in.
++      // Return type determines whether we continue the redirect automatically
++      // or whether we leave that to developer to handle.
++      render();
++      return false;
++    },
++    uiShown: function() {
++      // The widget is rendered.
++      // Hide the loader.
++      document.getElementById('loader').style.display = 'none';
++    }
++  },
++   'accountChooserEnabled': false,
++   'credentialHelper': firebaseui.auth.CredentialHelper.NONE,
++
++  // Other config options...
++});
+ 
+ 
++function render() {
++
+ //script for sendData.html
+ 
+ var sendData = document.getElementsByClassName("doctor");
+ if (sendData) {
+-  firebase.database().ref("/users/j2XI6lPPZMXcltQWMGbZUh9fPn33").on('value', function(snapshot) {
++  firebase.database().ref("/users/" + firebase.auth().currentUser.uid).on('value', function(snapshot) {
+     if (snapshot.val()["doctor"] != null) {
+       for (let element of document.getElementsByClassName("doctor")) {
+         element.innerText = snapshot.val()["doctor"];
+@@ -29,7 +56,7 @@ if (sendData) {
+ 
+ var progress = document.getElementById("armStartDate");
+ if (progress) {
+-  firebase.database().ref("/users/j2XI6lPPZMXcltQWMGbZUh9fPn33/exercises").on('value', function(snapshot) {
++  firebase.database().ref("/users/" + firebase.auth().currentUser.uid + "/exercises").on('value', function(snapshot) {
+     snapshot.forEach(function (childSnap) {
+       if (childSnap.exists()) {
+         updateTable(childSnap.key, childSnap.val());
+@@ -57,6 +84,7 @@ else if (backGraph) {
+   getData("back", document.getElementById("backChart2"), "Number of Reps", "Number of Reps Over Time");
+ }
+ 
++}
+ 
+ //functions used
+ 
+@@ -148,7 +176,7 @@ function updateTable(bodyPart, data) {
+ }
+ 
+ function getData(bodyPart, graph, yLabel, title) {
+-  firebase.database().ref("/users/j2XI6lPPZMXcltQWMGbZUh9fPn33/exercises/" + bodyPart + "/history").on('value', function(snapshot) {
++  firebase.database().ref("/users/" + firebase.auth().currentUser.uid + "/exercises/" + bodyPart + "/history").on('value', function(snapshot) {
+     var x = [];
+     var y = [];
+     snapshot.forEach(function (element) {
+diff --git a/www/sendData.html b/www/sendData.html
+index bf63a59..bea9705 100644
+--- a/www/sendData.html
++++ b/www/sendData.html
+@@ -10,6 +10,8 @@
+     <link href="style.css" type="text/css" rel="stylesheet">
+     <link href="sendData.css" type="text/css" rel="stylesheet">
+     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
++    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
++<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+   </head>
+ 
+   <body>
+@@ -30,6 +32,8 @@
+ 
+     <div id="spacer">
+     </div>
++    <div id="firebaseui-auth-container"></div>
++<div id="loader">Loading...</div>
+ 
+     <form id="form1">
+       <div>Send your latest data to <span class="doctor">your medical professional</span></div>

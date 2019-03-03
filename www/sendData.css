@@ -6,9 +6,10 @@
 form {
   position: relative;
   margin: 20px;
+  margin-left: 150px;
   padding: 10px;
   width: 35%;
-  height: 500px;
+  height: 410px;
   border: solid black 1px;
   border-radius: 5px;
   background-color: rgb(255,255,224);
@@ -27,4 +28,11 @@ input[type="submit"] {
   position: absolute;
   bottom: 30px;
   left: 10px;
+}
+
+#privacy {
+  margin: 20px;
+  padding: 10px;
+  width: 35%;
+  float: left;
 }

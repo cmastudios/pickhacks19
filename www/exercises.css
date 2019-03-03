@@ -2,3 +2,35 @@
   border: solid rgb(125,20,60) 2px;
   padding: 2px;
 }
+
+.content-left, .content-right {
+  margin: 20px;
+  padding: 10px;
+  width: 35%;
+  height: 350px;
+  border: solid black 1px;
+  border-radius: 5px;
+  background-color: rgb(204,255,204);
+  float: left;
+  margin-left: 150px;
+}
+
+.content-right {
+  float: right;
+  margin-left: 0px;
+  margin-right: 150px;
+}
+
+img {
+  margin: 20px;
+}
+
+.content-right + img {
+  float: right;
+}
+
+p {
+  width: 100%;
+  border-top: inherit;
+  padding-top: inherit;
+}

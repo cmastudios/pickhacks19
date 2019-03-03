@@ -1,6 +1,3 @@
-body {
-  background-color:white;
-}
 .textfamily {
   font-family: 'Mukta', sans-serif;
 }
@@ -54,7 +51,6 @@ body {
 
 
 #flexmandiv {
-  background-color : white;
   width: auto;
 }
 
@@ -65,7 +61,6 @@ body {
  width:auto;
  height:600px;
  line-height: 600px;
- padding-top: 75px;
 }
 
 .container {
@@ -90,12 +85,25 @@ body {
   font-family: 'Mukta', sans-serif;
 }
 
-#missionheader {
-overflow: auto;
-background-color: rgb(23, 100, 210);
-text-align: center;
-font-family: 'Mukta', sans-serif;
-padding: 5%;
+#aboutFlex {
+  background-color: #A3D289;
+  font-family: 'Mukta', sans-serif;
+  height: 340px;
+  width: 100%;
+  padding: 20px;
+}
+
+#aboutFlex p {
+  padding-left: 100px;
+  padding-right: 100px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  text-indent: 25px;
+
+}
+
+#aboutFlex * {
+  text-align: center;
 }
 
 #missionstatement {
@@ -132,5 +140,5 @@ padding: 5%;
 }
 
 #footer a {
-  color: rgb(0,191,255);
+  color: rgb(135,206,250);
 }

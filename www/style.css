@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(225,225,225);
+  background-color: rgb(240,240,240);
   font-family: "bookman";
 }
 
@@ -34,39 +34,9 @@ a:hover {
 }
 
 #title {
-  display: inline-block;
-  font-weight: 700;
-  font-size: 2em;
-  line-height: 65px;
+  margin: 10px;
 }
 
 #spacer {
   height: 100px;
-}
-
-/*content*/
-
-.content-left, .content-right {
-  margin: 20px;
-  padding: 10px;
-  width: 35%;
-  height: 400px;
-  border: solid black 1px;
-  border-radius: 5px;
-  background-color: rgb(204,255,204);
-  float: left;
-}
-
-.content-right {
-  float: right;
-}
-
-img {
-  margin: 20px;
-}
-
-p {
-  width: 100%;
-  border-top: inherit;
-  padding-top: inherit;
 }

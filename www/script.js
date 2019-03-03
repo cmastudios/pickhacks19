@@ -68,14 +68,17 @@ function updateTable(bodyPart, data) {
       for (var date in data["history"]) {
         if (data["history"][date]["complete"]) {
           var date = new Date(1000*data["history"][date]["measured_at"]);
-          startDate = date.getMonth() + 1 + "/" + date.getDay() + "/" + (1900 + date.getYear());
+          startDate = date.getMonth() + 1 + "/" + date.getDay() + 1 + "/" + (1900 + date.getYear());
           break;
         }
       }
     }
   document.getElementById(bodyPart + "StartDate").innerText = startDate;
 
-  var goal = data["goal"];
+  var goal = "no goal";
+  if (data["goal"] != null) {
+    goal = data["goal"];
+  }
   document.getElementById(bodyPart + "Goal").innerText = goal;
 
   var initBaseline = "no recorded baseline";
@@ -85,6 +88,7 @@ function updateTable(bodyPart, data) {
     if (data["history"][date]["complete"] && data["history"][date]["baseline"]) {
       if (!initBaselineFound) {
         initBaseline = Math.round(data["history"][date]["measurement"]);
+        initBaselineFound = true;
       }
       currBaseline = Math.round(data["history"][date]["measurement"]);
     }
@@ -95,46 +99,50 @@ function updateTable(bodyPart, data) {
   var numReps = 0;
   for (var date in data["history"]) {
     if (data["history"][date]["complete"] && !data["history"][date]["baseline"]) {
-      numReps++;
+      numReps += data["history"][date]["measurement"];
     }
   }
   document.getElementById(bodyPart + "NumReps").innerText = numReps;
 
   var currentImprovement = "no data yet";
-  var derivs = [];
-  var prev = null;
-  for (var i = 0; i < keys.length; i++) {
-    if (data["history"][keys[i]]["complete"] && data["history"][keys[i]]["baseline"]) {
-      if (prev != null) {
-        derivs.push(data["history"][keys[i]]["measurement"]
-                  - data["history"][keys[prev]]["measurement"]);
+  if (data["goal"] != null) {
+    var derivs = [];
+    var prev = null;
+    for (var i = 0; i < keys.length; i++) {
+      if (data["history"][keys[i]]["complete"] && data["history"][keys[i]]["baseline"]) {
+        if (prev != null) {
+          derivs.push(data["history"][keys[i]]["measurement"]
+                    - data["history"][keys[prev]]["measurement"]);
+        }
+        prev = i;
       }
-      prev = i;
     }
-  }
-  if (derivs.length > 1) {
-    derivsSum = 0;
-    count = 0;
-    for (var i = derivs.length - 1; i > derivs.length - 4 && i >= 0; i--, count++) {
-      derivsSum += derivs[i];
-    }
-    derivsAvg = derivsSum / count;
-    if (data["goal"] - initBaseline == 0) {
-      currentImprovement = "100%";
-    }
-    else {
-      currentImprovement = Math.round(100 * derivsAvg / (data["goal"] - initBaseline)) + "%";
+    if (derivs.length > 1) {
+      derivsSum = 0;
+      count = 0;
+      for (var i = derivs.length - 1; i > derivs.length - 4 && i >= 0; i--, count++) {
+        derivsSum += derivs[i];
+      }
+      derivsAvg = derivsSum / count;
+      if (data["goal"] - initBaseline == 0) {
+        currentImprovement = "100%";
+      }
+      else {
+        currentImprovement = Math.round(100 * derivsAvg / (data["goal"] - initBaseline)) + "%";
+      }
     }
   }
   document.getElementById(bodyPart + "CurrentImprovement").innerText = currentImprovement;
 
   var overallImprovement = "no data yet";
-  if (currBaseline != "no recorded baseline") {
-    if (data["goal"] - initBaseline == 0) {
-      overallImprovement = "100%";
-    }
-    else {
-      overallImprovement = Math.round((currBaseline - initBaseline) / (data["goal"] - initBaseline)) + "%";
+  if (data["goal"] != null) {
+    if (currBaseline != "no recorded baseline") {
+      if (data["goal"] - initBaseline == 0) {
+        overallImprovement = "100%";
+      }
+      else {
+        overallImprovement = Math.round(100 * (currBaseline - initBaseline) / (data["goal"] - initBaseline)) + "%";
+      }
     }
   }
   document.getElementById(bodyPart + "OverallImprovement").innerText = overallImprovement;
