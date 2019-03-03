@@ -9,5 +9,6 @@ target 'FlexManager' do
 pod 'Firebase/Core'
 pod 'Firebase/Auth'
 pod 'Firebase/Database'
+pod "PromiseKit", "~> 6.8"
 
 end

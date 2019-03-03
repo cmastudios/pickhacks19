@@ -8,82 +8,10 @@
 
 import UIKit
 import Firebase
+import PromiseKit
 
 enum MeasurementType : String, CaseIterable {
     case arm = "Arm Angle"
-}
-
-class LoginController : UIViewController, UITextFieldDelegate {
-    
-    @IBOutlet weak var usernameField: UITextField!
-    @IBOutlet weak var passwordField: UITextField!
-    
-    var handle: AuthStateDidChangeListenerHandle?
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        handle = Auth.auth().addStateDidChangeListener { (auth, user) in
-            if user != nil && !user!.isAnonymous {
-                self.performSegue(withIdentifier: "loggedInSegue", sender: self)
-            }
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if let h = handle {
-            Auth.auth().removeStateDidChangeListener(h)
-        }
-    }
-    
-    @IBAction func login(_ sender: Any) {
-        guard let email = usernameField.text else {
-            return
-        }
-        guard let password = passwordField.text else {
-            return
-        }
-        Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
-            guard result != nil else {
-                let alert = UIAlertController(title: "Failed to log in", message: error?.localizedDescription ?? "Unknown error", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                return
-            }
-            print("Logged in")
-        }
-    }
-    
-    @IBAction func signup(_ sender: Any) {
-        guard let email = usernameField.text else {
-            return
-        }
-        guard let password = passwordField.text else {
-            return
-        }
-        Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-            guard result != nil else {
-                let alert = UIAlertController(title: "Failed to create account", message: error?.localizedDescription ?? "Unknown error", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                return
-            }
-            print("Created")
-        }
-    }
-    
-    @IBAction func prepareForUnwind(segue: UIStoryboardSegue) {
-        
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField.tag == 0 {
-            passwordField.becomeFirstResponder()
-        } else if textField.tag == 1 {
-            passwordField.resignFirstResponder()
-        }
-        return false
-    }
 }
 
 class ViewController: UITabBarController {
@@ -100,21 +28,17 @@ class Exercise {
     var name: String
     var datetime: UInt64
     var completed: Bool
+    var baseline: Bool
     
-    init(fromParams name: String, datetime: UInt64, completed: Bool = false) {
+    init(fromParams name: String, datetime: UInt64, baseline: Bool = false, completed: Bool = false) {
         self.name = name
         self.datetime = datetime
         self.completed = completed
+        self.baseline = baseline
     }
 }
 
 class Exercises: UITableViewController {
-    
-    let elist : [Exercise] = [
-        Exercise(fromParams: "Yeeting", datetime: 1551000000),
-        Exercise(fromParams: "T-Posing", datetime: 1551502879, completed: true),
-        Exercise(fromParams: "Dabbing", datetime: 1551502879),
-    ]
     
     var exercisesToday : [Exercise] = []
     var exercisesPast : [Exercise] = []
@@ -130,13 +54,11 @@ class Exercises: UITableViewController {
             .observeSingleEvent(of: .value) { (snapshot) in
                 for exercise in snapshot.children.allObjects as! [DataSnapshot] {
                     let name = exercise.key
-                    for schedule in exercise.children.allObjects as! [DataSnapshot] {
+                    for schedule in exercise.childSnapshot(forPath: "history").children.allObjects as! [DataSnapshot] {
                         let time = UInt64(schedule.key) ?? 0
-                        let completed = schedule.childSnapshot(forPath: "complete").value as? Bool
-                        let e = Exercise(fromParams: name, datetime: time)
-                        if (completed == true) {
-                            e.completed = true
-                        }
+                        let completed = schedule.childSnapshot(forPath: "complete").value as? Bool == true
+                        let baseline = schedule.childSnapshot(forPath: "baseline").value as? Bool == true
+                        let e = Exercise(fromParams: name, datetime: time, baseline: baseline, completed: completed)
                         let date = Date(timeIntervalSince1970: TimeInterval(e.datetime))
                         if abs(date.timeIntervalSinceNow) < 86400 {
                             self.exercisesToday.append(e)
@@ -194,6 +116,8 @@ class Exercises: UITableViewController {
             e = exercisesToday[indexPath.row]
             if e?.completed ?? true {
                 cell = tableView.dequeueReusableCell(withIdentifier: "exerciseTodayComplete", for: indexPath)
+            } else if e?.baseline ?? false {
+                cell = tableView.dequeueReusableCell(withIdentifier: "exerciseTodayBaseline", for: indexPath)
             } else {
                 cell = tableView.dequeueReusableCell(withIdentifier: "exerciseTodayNotComplete", for: indexPath)
             }
@@ -227,10 +151,18 @@ class Exercises: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.section == 0 {
-            let e = exercisesToday[indexPath.row]
-            e.completed = true
-            tableView.reloadData()
+//        if indexPath.section == 0 {
+//            let e = exercisesToday[indexPath.row]
+//            e.completed = true
+//            tableView.reloadData()
+//        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let tmmvc = segue.destination as? TakeMeasurementModalViewController {
+            guard let i = tableView.indexPathForSelectedRow?.row else {return}
+            let e = exercisesToday[i]
+            tmmvc.exercise = e
         }
     }
 }
@@ -258,7 +190,7 @@ class MeasurementViewController : UIViewController, UIPickerViewDelegate, UIPick
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let tmmvc = segue.destination as? TakeMeasurementModalViewController {
             if let mt = measurementType {
-                tmmvc.measurementType = mt
+                tmmvc.exercise = Exercise(fromParams: mt.rawValue, datetime: 0)
             } else {
                 let alert = UIAlertController(title: "Error", message: "Please select a measurement type", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (uiaa) in
@@ -283,18 +215,84 @@ class MeasurementViewController : UIViewController, UIPickerViewDelegate, UIPick
 }
 
 class TakeMeasurementModalViewController : UIViewController {
-    var measurementType: MeasurementType!
+    var exercise: Exercise?
+    
     override func viewWillAppear(_ animated: Bool) {
-        startTakingMeasurement()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-            stopTakingMeasurement()
+        let delay: Double
+        if exercise?.baseline == false {
+            delay = 30
+        } else {
+            delay = 10
+        }
+        var devid: String = ""
+        
+        firstly {
+            readUserDeviceId()
+        }.then { (did: String) -> Promise<DatabaseReference> in
+            devid = did
+            return clearMeasurementField(devid: devid)
+        }.then { ref in
+            startTakingMeasurement(devid: devid)
+        }.then { rslt in
+            after(seconds: TimeInterval(delay))
+        }.then { rslt in
+            stopTakingMeasurement(devid: devid)
+        }.ensure {
             self.dismiss(animated: true, completion: nil)
+        }.catch { e in
+            print(e)
+        }
+        
+        
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+//            stopTakingMeasurement()
+//            self.dismiss(animated: true, completion: nil)
+//        }
+    }
+    
+    func cleanup() {
+        
+    }
+}
+
+enum DataReadError: Error {
+    case httperror(Int)
+    case invalidchars
+    case nodevid
+    case nouserid
+}
+
+func readUserDeviceId() -> Promise<String> {
+    return Promise { promise in
+        if let myUserId = Auth.auth().currentUser?.uid {
+            Database.database().reference().child("users").child(myUserId).child("device")
+                .observeSingleEvent(of: .value) { (snapshot) in
+                    if let devid = snapshot.value as? String {
+                        promise.fulfill(devid)
+                    } else {
+                        promise.reject(DataReadError.nodevid)
+                    }
+            }
+        } else {
+            promise.reject(DataReadError.nouserid)
         }
     }
 }
 
-func startTakingMeasurement() {
-    let url = URL(string: "https://api.particle.io/v1/devices/pickhacks19-2/send")!
+func clearMeasurementField(devid: String) -> Promise<DatabaseReference> {
+    return Promise { promise in
+        Database.database().reference().child("devices").child(devid).child("measurements").removeValue { (error, ref) in
+            promise.resolve(error, ref)
+        }
+    }
+}
+
+func startTakingMeasurement(devid: String) -> Promise<String> {
+    guard let did = devid.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {
+        return Promise.init(error: DataReadError.invalidchars)
+    }
+    let url = URL(string: "https://api.particle.io/v1/devices/" + did + "/send")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.setValue("Bearer 114a19795ef04a0b1ba4c856e8f8448a0cb9b139", forHTTPHeaderField: "Authorization")
@@ -303,34 +301,41 @@ func startTakingMeasurement() {
     do {
         request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted) // pass dictionary to nsdata object and set it as request body
     } catch let error {
-        print(error.localizedDescription)
+        return Promise.init(error: error)
     }
     
-    let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data,
-            let response = response as? HTTPURLResponse,
-            error == nil else {                                              // check for fundamental networking error
-                print("error", error ?? "Unknown error")
+    return Promise { promise in
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data,
+                let response = response as? HTTPURLResponse,
+                error == nil else {                                              // check for fundamental networking error
+                    promise.reject(error!)
+                    return
+            }
+            
+            guard (200 ... 299) ~= response.statusCode else {                    // check for http errors
+                print("statusCode should be 2xx, but is \(response.statusCode)")
+                print("response = \(response)")
+                let responseString = String(data: data, encoding: .utf8)
+                print("responseString = \(String(describing: responseString))")
+                promise.reject(DataReadError.httperror(response.statusCode))
                 return
-        }
-        
-        guard (200 ... 299) ~= response.statusCode else {                    // check for http errors
-            print("statusCode should be 2xx, but is \(response.statusCode)")
-            print("response = \(response)")
+            }
+            
             let responseString = String(data: data, encoding: .utf8)
             print("responseString = \(String(describing: responseString))")
-            return
+            promise.fulfill(responseString ?? "")
         }
         
-        let responseString = String(data: data, encoding: .utf8)
-        print("responseString = \(String(describing: responseString))")
+        task.resume()
     }
-    
-    task.resume()
 }
 
-func stopTakingMeasurement() {
-    let url = URL(string: "https://api.particle.io/v1/devices/pickhacks19-2/stop")!
+func stopTakingMeasurement(devid: String) -> Promise<String> {
+    guard let did = devid.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {
+        return Promise.init(error: DataReadError.invalidchars)
+    }
+    let url = URL(string: "https://api.particle.io/v1/devices/" + did + "/stop")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.setValue("Bearer 114a19795ef04a0b1ba4c856e8f8448a0cb9b139", forHTTPHeaderField: "Authorization")
@@ -339,29 +344,32 @@ func stopTakingMeasurement() {
     do {
         request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted) // pass dictionary to nsdata object and set it as request body
     } catch let error {
-        print(error.localizedDescription)
+        return Promise.init(error: error)
     }
     
-    let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data,
-            let response = response as? HTTPURLResponse,
-            error == nil else {                                              // check for fundamental networking error
-                print("error", error ?? "Unknown error")
+    return Promise { promise in
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data,
+                let response = response as? HTTPURLResponse,
+                error == nil else {                                              // check for fundamental networking error
+                    promise.reject(error!)
+                    return
+            }
+            
+            guard (200 ... 299) ~= response.statusCode else {                    // check for http errors
+                print("statusCode should be 2xx, but is \(response.statusCode)")
+                print("response = \(response)")
+                let responseString = String(data: data, encoding: .utf8)
+                print("responseString = \(String(describing: responseString))")
+                promise.reject(DataReadError.httperror(response.statusCode))
                 return
-        }
-        
-        guard (200 ... 299) ~= response.statusCode else {                    // check for http errors
-            print("statusCode should be 2xx, but is \(response.statusCode)")
-            print("response = \(response)")
+            }
+            
             let responseString = String(data: data, encoding: .utf8)
             print("responseString = \(String(describing: responseString))")
-            return
+            promise.fulfill(responseString ?? "")
         }
         
-        let responseString = String(data: data, encoding: .utf8)
-        print("responseString = \(String(describing: responseString))")
+        task.resume()
     }
-    
-    task.resume()
-
 }
