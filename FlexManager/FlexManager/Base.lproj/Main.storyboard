@@ -10,6 +10,68 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Recommendations-->
+        <scene sceneID="xZI-dc-5bj">
+            <objects>
+                <viewController id="EjW-90-cBP" customClass="RecommendationView" customModule="FlexManager" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DXX-2J-AsI">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="9qW-P7-1IT">
+                                <rect key="frame" x="8" y="28" width="359" height="29"/>
+                                <segments>
+                                    <segment title="Shoulder"/>
+                                    <segment title="Hip"/>
+                                    <segment title="Back"/>
+                                </segments>
+                                <connections>
+                                    <action selector="onChangeValue:" destination="EjW-90-cBP" eventType="valueChanged" id="7gc-rh-Nit"/>
+                                </connections>
+                            </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Improvement: 50%" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oQz-5h-jNT">
+                                <rect key="frame" x="8" y="86" width="359" height="27.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Our Recommendation: Increase reps by 20%" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k4N-YI-XxU">
+                                <rect key="frame" x="8" y="153.5" width="359" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="B3i-Ff-rZh"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="D5L-q6-EUt" firstAttribute="trailing" secondItem="oQz-5h-jNT" secondAttribute="trailing" constant="8" id="2At-nt-brL"/>
+                            <constraint firstItem="D5L-q6-EUt" firstAttribute="trailing" secondItem="9qW-P7-1IT" secondAttribute="trailing" constant="8" id="2Ec-0z-SnL"/>
+                            <constraint firstItem="9qW-P7-1IT" firstAttribute="leading" secondItem="D5L-q6-EUt" secondAttribute="leading" constant="8" id="BZG-Ij-tFb"/>
+                            <constraint firstItem="oQz-5h-jNT" firstAttribute="leading" secondItem="D5L-q6-EUt" secondAttribute="leading" constant="8" id="GBl-yc-3ya"/>
+                            <constraint firstItem="D5L-q6-EUt" firstAttribute="trailing" secondItem="9qW-P7-1IT" secondAttribute="trailing" constant="8" id="HMG-bR-vnN"/>
+                            <constraint firstItem="oQz-5h-jNT" firstAttribute="top" secondItem="9qW-P7-1IT" secondAttribute="bottom" constant="30" id="U7y-AC-51p"/>
+                            <constraint firstItem="9qW-P7-1IT" firstAttribute="top" secondItem="D5L-q6-EUt" secondAttribute="top" constant="8" id="UtU-tx-HqT"/>
+                            <constraint firstItem="k4N-YI-XxU" firstAttribute="top" secondItem="oQz-5h-jNT" secondAttribute="bottom" constant="40" id="YOE-qu-PAJ"/>
+                            <constraint firstItem="9qW-P7-1IT" firstAttribute="leading" secondItem="D5L-q6-EUt" secondAttribute="leading" constant="8" id="aBM-XS-7Ig"/>
+                            <constraint firstItem="k4N-YI-XxU" firstAttribute="leading" secondItem="D5L-q6-EUt" secondAttribute="leading" constant="8" id="bVQ-bM-b2g"/>
+                            <constraint firstItem="D5L-q6-EUt" firstAttribute="trailing" secondItem="k4N-YI-XxU" secondAttribute="trailing" constant="8" id="j3Y-dz-9cM"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="D5L-q6-EUt"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Recommendations" image="physiotherapy" id="CeG-Gb-tAS"/>
+                    <connections>
+                        <outlet property="improvement" destination="oQz-5h-jNT" id="ZC3-iL-P8u"/>
+                        <outlet property="recommendation" destination="k4N-YI-XxU" id="lnm-wS-WLe"/>
+                        <outlet property="selector" destination="9qW-P7-1IT" id="UFK-fk-WaU"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x98-RC-pKf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53.600000000000001" y="651.72413793103453"/>
+        </scene>
         <!--Measurements-->
         <scene sceneID="t5K-Pm-Pov">
             <objects>
@@ -66,7 +128,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="5gD-WH-RdM"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Measurements" id="3fy-1R-Gc2"/>
+                    <tabBarItem key="tabBarItem" title="Measurements" image="Office_Collection_6-512" id="3fy-1R-Gc2"/>
                     <connections>
                         <segue destination="YMf-Af-WgM" kind="unwind" identifier="unwindToLogin" unwindAction="prepareForUnwindWithSegue:" id="O1c-ps-iDO"/>
                     </connections>
@@ -220,11 +282,12 @@ Please move your limb in the appropriate motion and hold your position for 10 se
                             <outlet property="delegate" destination="N7s-qE-EeX" id="6PW-zf-uiR"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="My Exercises" id="oYP-yj-eyk"/>
+                    <tabBarItem key="tabBarItem" title="My Exercises" image="_ionicons_svg_ios-walk" id="oYP-yj-eyk"/>
                     <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="Ukj-oc-sab">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <attributedString key="attributedTitle">
-                            <fragment content="i'm pickle rick!!">
+                            <fragment content="Reloading data...">
                                 <attributes>
                                     <font key="NSFont" metaFont="smallSystem"/>
                                     <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
@@ -337,8 +400,9 @@ Please move your limb in the appropriate motion and hold your position for 10 se
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="N7s-qE-EeX" kind="relationship" relationship="viewControllers" id="sW9-sX-pES"/>
                         <segue destination="cXj-8V-6GE" kind="relationship" relationship="viewControllers" id="FZa-59-srh"/>
+                        <segue destination="N7s-qE-EeX" kind="relationship" relationship="viewControllers" id="sW9-sX-pES"/>
+                        <segue destination="EjW-90-cBP" kind="relationship" relationship="viewControllers" id="gZx-ee-INj"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aOb-Qq-xNj" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -392,6 +456,11 @@ Please move your limb in the appropriate motion and hold your position for 10 se
             <point key="canvasLocation" x="1839" y="-650"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Office_Collection_6-512" width="32" height="32"/>
+        <image name="_ionicons_svg_ios-walk" width="24" height="24"/>
+        <image name="physiotherapy" width="25.600000381469727" height="25.600000381469727"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="mwL-P4-UFj"/>
     </inferredMetricsTieBreakers>

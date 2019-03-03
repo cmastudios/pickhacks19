@@ -123,7 +123,7 @@ class Exercises: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell : UITableViewCell!
         let e : Exercise?
-        if indexPath.section == 0 {
+        if indexPath.section == 0 && indexPath.row < exercisesToday.count {
             e = exercisesToday[indexPath.row]
             if e?.completed ?? true {
                 cell = tableView.dequeueReusableCell(withIdentifier: "exerciseTodayComplete", for: indexPath)
@@ -233,7 +233,7 @@ class TakeMeasurementModalViewController : UIViewController {
         if exercise?.baseline == false {
             delay = 30
         } else {
-            delay = 10
+            delay = 5
         }
         var devid: String = ""
         
@@ -466,4 +466,84 @@ func storeExerciseValue(exercise: Exercise, value: Double) -> Promise<DatabaseRe
             promise.reject(DataReadError.nouserid)
         }
     }
+}
+
+func findImprovement(mt: MeasurementType) -> Promise<Double> {
+    return Promise { promise in
+        guard let myUserId = Auth.auth().currentUser?.uid else {
+            return promise.reject(DataReadError.nouserid)
+        }
+        return Database.database().reference().child("users").child(myUserId).child("exercises").child(mt.rawValue).observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let goal = snapshot.childSnapshot(forPath: "goal").value as? Double else { return promise.reject(DataReadError.nodata)}
+            var derivs: [Double] = []
+            var prevMeasurement: Double?
+            var initBaseline: Double?
+            for exsnap in snapshot.childSnapshot(forPath: "history").children.allObjects as! [DataSnapshot] {
+                let map = exsnap.value as! [String: AnyObject]
+                if map["complete"] as? Bool == true && map["baseline"] as? Bool == true {
+                    let measurement: Double = map["measurement"] as! Double
+                    if let prev = prevMeasurement {
+                        derivs.append(measurement - prev)
+                    }
+                    if initBaseline == nil {
+                        initBaseline = measurement
+                    }
+                    prevMeasurement = measurement
+                }
+            }
+            if derivs.count > 1 {
+                let count = max(0, derivs.count - 3)
+                let mean = derivs.suffix(from: count).reduce(0, +) / Double(count)
+                if goal - (initBaseline ?? 0.0) == 0 {
+                    return promise.fulfill(1)
+                } else {
+                    return promise.fulfill(mean / (goal - (initBaseline ?? 0.0)))
+                }
+            }
+            return promise.fulfill(0)
+        })
+    }
+}
+
+
+class RecommendationView : UIViewController {
+    
+    @IBOutlet weak var improvement: UILabel!
+    @IBOutlet weak var recommendation: UILabel!
+    @IBOutlet weak var selector: UISegmentedControl!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        reloaddata()
+    }
+    
+    @IBAction func onChangeValue(_ sender: Any) {
+        reloaddata()
+    }
+    
+    func reloaddata() {
+        let mt : MeasurementType
+        switch selector.selectedSegmentIndex {
+        case 0:
+            mt = .arm
+            break
+        case 1:
+            mt = .leg
+            break
+        case 2:
+            mt = .back
+            break
+        default:
+            mt = .arm
+        }
+        findImprovement(mt: mt).done { (value) in
+            self.render(value)
+        }
+    }
+    
+    func render(_ improvlevel: Double) {
+        improvement.text = NSString(format: "Current improvement: %.0f%%", improvlevel * 100) as String
+        recommendation.text = NSString(format: "Our Recommendation: Increase reps by %.0f", 20 * improvlevel) as String
+    }
+    
 }
