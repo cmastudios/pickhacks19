@@ -402,10 +402,10 @@ func getExerciseValue(devid: String, exercise: Exercise) -> Promise<Double> {
 
                 if let data = snapshot.value as? [[String: Double]] {
                     if exercise.name == "arm" && exercise.baseline {
-                        if let last = data.last, let z = last["z"] {
-                            promise.fulfill(acos(z) * 180 / 2 / .pi)
+                        if let last = data.last, let y = last["y"] {
+                            promise.fulfill(acos(max(min(y, 1), -1)) * 180 / .pi)
                         } else {
-                            print("ERROR couldn't get z coordinate")
+                            print("ERROR couldn't get y coordinate")
                             promise.reject(DataReadError.invmeasurement)
                         }
                     } else if exercise.name == "arm" && !exercise.baseline {
@@ -421,9 +421,17 @@ func getExerciseValue(devid: String, exercise: Exercise) -> Promise<Double> {
                         reps = reps / 2.0
                         promise.fulfill(reps)
                     } else if exercise.name == "leg" {
+                        var min = 99.99
+                        for i in 0..<data.count {
+                            let val = data[i]["x"]!
+                            if val < min {
+                                min = val
+                            }
+                        }
+                        promise.fulfill(abs(min) * 90.0)
                     } else if exercise.name == "back" {
                         if let last = data.last, let y = last["y"] {
-                            promise.fulfill(acos(y) * 180 / 2 / .pi)
+                            promise.fulfill(acos(max(min(y, 1), -1)) * 180 / .pi)
                         } else {
                             print("ERROR couldn't get y coordinate")
                             promise.reject(DataReadError.invmeasurement)
@@ -441,29 +449,19 @@ func getExerciseValue(devid: String, exercise: Exercise) -> Promise<Double> {
 }
 
 func storeExerciseValue(exercise: Exercise, value: Double) -> Promise<DatabaseReference> {
+    let map: [String: AnyObject] = [
+        "complete": true as AnyObject,
+        "measured_at": UInt64(Date().timeIntervalSince1970) as AnyObject,
+        "measurement": value as AnyObject,
+        "baseline": exercise.baseline as AnyObject
+    ]
     return Promise { promise in
         if let myUserId = Auth.auth().currentUser?.uid {
             let ex = Database.database().reference().child("users").child(myUserId)
                 .child("exercises").child(exercise.name).child("history").child(String(exercise.datetime))
-            ex.runTransactionBlock({ (currentData) -> TransactionResult in
-                if var exdata = currentData.value as? [String : AnyObject] {
-                    exdata["complete"] = true as AnyObject
-                    exdata["measured_at"] = UInt64(Date().timeIntervalSince1970) as AnyObject
-                    exdata["measurement"] = value as AnyObject
-                    
-                    // Set value and report transaction success
-                    currentData.value = exdata
-                    
-                    return TransactionResult.success(withValue: currentData)
-                }
-                return TransactionResult.success(withValue: currentData)
-
-            }){ (error, committed, snapshot) in
-                promise.resolve(error, snapshot?.ref)
-                if let error = error {
-                    print(error.localizedDescription)
-                }
-            }
+            ex.setValue(map, withCompletionBlock: { (error, ref) in
+                promise.resolve(error, ref)
+            })
         } else {
             promise.reject(DataReadError.nouserid)
         }
