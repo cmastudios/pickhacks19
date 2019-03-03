@@ -9,10 +9,21 @@
 import UIKit
 import Firebase
 import PromiseKit
+// import this
+import AVFoundation
+
 
 enum MeasurementType : String, CaseIterable {
-    case arm = "Arm Angle"
+    case arm = "arm"
+    case leg = "leg"
+    case back = "back"
 }
+
+let exerciseDisplayNames: [String:String] = [
+    "arm": "Shoulder",
+    "leg": "Hip",
+    "back": "Back",
+]
 
 class ViewController: UITabBarController {
 
@@ -142,7 +153,7 @@ class Exercises: UITableViewController {
 
         }
         
-        cell.textLabel?.text = e?.name ?? "Unknown"
+        cell.textLabel?.text = exerciseDisplayNames[e?.name ?? ""] ?? "Unknown"
         
         
         return cell
@@ -180,7 +191,7 @@ class MeasurementViewController : UIViewController, UIPickerViewDelegate, UIPick
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return MeasurementType.allCases[row].rawValue
+        return exerciseDisplayNames[MeasurementType.allCases[row].rawValue]
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
@@ -190,7 +201,7 @@ class MeasurementViewController : UIViewController, UIPickerViewDelegate, UIPick
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let tmmvc = segue.destination as? TakeMeasurementModalViewController {
             if let mt = measurementType {
-                tmmvc.exercise = Exercise(fromParams: mt.rawValue, datetime: 0)
+                tmmvc.exercise = Exercise(fromParams: mt.rawValue, datetime: UInt64(Date().timeIntervalSince1970), baseline: true, completed: false)
             } else {
                 let alert = UIAlertController(title: "Error", message: "Please select a measurement type", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (uiaa) in
@@ -237,8 +248,16 @@ class TakeMeasurementModalViewController : UIViewController {
             after(seconds: TimeInterval(delay))
         }.then { rslt in
             stopTakingMeasurement(devid: devid)
+        }.then { rslt in
+            getExerciseValue(devid: devid, exercise: self.exercise!)
+        }.then { value in
+            storeExerciseValue(exercise: self.exercise!, value: value)
         }.ensure {
             self.dismiss(animated: true, completion: nil)
+            // create a sound ID, in this case its the tweet sound.
+            let systemSoundID: SystemSoundID = 1034
+            // to play sound
+            AudioServicesPlaySystemSound (systemSoundID)
         }.catch { e in
             print(e)
         }
@@ -261,6 +280,8 @@ enum DataReadError: Error {
     case invalidchars
     case nodevid
     case nouserid
+    case nodata
+    case invmeasurement
 }
 
 func readUserDeviceId() -> Promise<String> {
@@ -371,5 +392,80 @@ func stopTakingMeasurement(devid: String) -> Promise<String> {
         }
         
         task.resume()
+    }
+}
+
+func getExerciseValue(devid: String, exercise: Exercise) -> Promise<Double> {
+    return Promise { promise in
+        Database.database().reference().child("devices").child(devid).child("measurements")
+            .observeSingleEvent(of: .value, with: { (snapshot) in
+
+                if let data = snapshot.value as? [[String: Double]] {
+                    if exercise.name == "arm" && exercise.baseline {
+                        if let last = data.last, let z = last["z"] {
+                            promise.fulfill(acos(z) * 180 / 2 / .pi)
+                        } else {
+                            print("ERROR couldn't get z coordinate")
+                            promise.reject(DataReadError.invmeasurement)
+                        }
+                    } else if exercise.name == "arm" && !exercise.baseline {
+                        // count times crossing X axis
+                        var reps = 0.0
+                        for i in 1..<data.count {
+                            let a = data[i-1]["z"]! - 0.5
+                            let b = data[i]["z"]! - 0.5
+                            if a * b < 0 {
+                                reps = reps + 1
+                            }
+                        }
+                        reps = reps / 2.0
+                        promise.fulfill(reps)
+                    } else if exercise.name == "leg" {
+                    } else if exercise.name == "back" {
+                        if let last = data.last, let y = last["y"] {
+                            promise.fulfill(acos(y) * 180 / 2 / .pi)
+                        } else {
+                            print("ERROR couldn't get y coordinate")
+                            promise.reject(DataReadError.invmeasurement)
+                        }
+                    } else {
+                        print("ERROR invalid exercise")
+                        promise.fulfill(0)
+                    }
+                } else {
+                    print("BAD CAST")
+                    promise.reject(DataReadError.nodata)
+                }
+        })
+    }
+}
+
+func storeExerciseValue(exercise: Exercise, value: Double) -> Promise<DatabaseReference> {
+    return Promise { promise in
+        if let myUserId = Auth.auth().currentUser?.uid {
+            let ex = Database.database().reference().child("users").child(myUserId)
+                .child("exercises").child(exercise.name).child("history").child(String(exercise.datetime))
+            ex.runTransactionBlock({ (currentData) -> TransactionResult in
+                if var exdata = currentData.value as? [String : AnyObject] {
+                    exdata["complete"] = true as AnyObject
+                    exdata["measured_at"] = UInt64(Date().timeIntervalSince1970) as AnyObject
+                    exdata["measurement"] = value as AnyObject
+                    
+                    // Set value and report transaction success
+                    currentData.value = exdata
+                    
+                    return TransactionResult.success(withValue: currentData)
+                }
+                return TransactionResult.success(withValue: currentData)
+
+            }){ (error, committed, snapshot) in
+                promise.resolve(error, snapshot?.ref)
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+            }
+        } else {
+            promise.reject(DataReadError.nouserid)
+        }
     }
 }
