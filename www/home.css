@@ -1,6 +1,8 @@
-#home {
-	border: solid rgb(125, 20, 60) 2 px;
-	padding: 2px;
+body {
+  background-color:white;
+}
+.textfamily {
+  font-family: 'Mukta', sans-serif;
 }
 
 .imgheader {
@@ -14,6 +16,7 @@
   margin-right: auto;
 
 }
+
 
 
 #thephone {
@@ -46,7 +49,7 @@
 }
 
 #flexmandiv {
-  background-color = white;
+  background-color : white;
   width: auto;
 }
 
