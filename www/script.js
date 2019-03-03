@@ -151,20 +151,18 @@ function getData(bodyPart, graph) {
     var y = [];
     snapshot.forEach(function (element) {
       element = element.val();
-      console.log(element);
       if (element["complete"]) {
-        x.push(element["measured_at"]);
+        x.push(new Date(element["measured_at"]));
         y.push(element["measurement"]);
       }
     });
-    console.log(x);
-    console.log(y);
+
     buildGraph(bodyPart, graph, x, y);
   });
 }
 
 function buildGraph(bodyPart, graph, x, y) {
-  var ctx = graph.getContext('2d');
+  var ctx = graph.getContext("2d");
   var chart = new Chart(ctx, {
     type: "line",
     data: {
@@ -180,15 +178,29 @@ function buildGraph(bodyPart, graph, x, y) {
       ]
     },
     options: {
-      xAxes: [
-        {
-          type: 'time',
-          ticks: {
-            autoSkip: true,
-            maxTicksLimit: 20
+      scales: {
+        yAxes: [
+          {
+            scaleLabel: {
+              display: true,
+              labelString: "Degrees"
+            }
           }
-        }
-      ],
+        ],
+        xAxes: [
+          {
+            scaleLabel: {
+              display: true,
+              labelString: "Date"
+            },
+            type: "time",
+            ticks: {
+              autoSkip: true,
+              maxTicksLimit: 20
+            }
+          }
+        ]
+      },
       title: {
         text: bodyPart + " motion range over time",
         display: true,
