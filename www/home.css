@@ -9,13 +9,18 @@
 
 }
 #theman {
- display: block;
-float: left;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+
 }
 
+
 #thephone {
-  display: block;
- float: right;
+   display: block;
+  margin-left: auto;
+  margin-right: auto;
+ 
 }
 .lightbox{
     -webkit-stroke-width: 5.3px;
@@ -43,7 +48,6 @@ float: left;
 #flexmandiv {
   background-color = white;
   width: auto;
-  height: 650px;
 }
 
 #flexman {
@@ -52,7 +56,8 @@ float: left;
  margin-right: auto;
  width:auto;
  height:600px; 
- line-height: 650px;
+ line-height: 600px;
+padding-top: 75px;
 }
 
 .container {
@@ -78,13 +83,15 @@ float: left;
 
 #missionheader {
 overflow: auto;
-background-color: white;
+background-color: rgb(23, 100, 210);
 text-align: center;
 font-family: 'Mukta', sans-serif;
+padding: 5%;
 }
 
 #missionstatement {
   text-align: center;
+
   font-family: 'Mukta', sans-serif;
 }
 
@@ -95,10 +102,14 @@ font-family: 'Mukta', sans-serif;
   width: 100%;
   height: 100px;
   line-height: 100px;
+  text-align: center;
   border-bottom: none;
   background-color: rgb(135,206,250);
   font-family: 'Mukta', sans-serif;
   font-size: 20px;
 }
 
-
+#themanphone {
+  width: 50%;
+  margin: 0 auto;
+}
