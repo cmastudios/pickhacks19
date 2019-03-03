@@ -87,8 +87,10 @@
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="adm-Kx-ZBe">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                             </activityIndicatorView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please move your limb in the appropriate motion and hold your position for 10 seconds" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7GI-hQ-qNK">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7GI-hQ-qNK">
                                 <rect key="frame" x="16" y="20" width="343" height="316"/>
+                                <string key="text">BASELINE MEASUREMENT: 
+Please move your limb in the appropriate motion and hold your position for 10 seconds.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -188,6 +190,29 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="Gxc-q0-Q1S" kind="presentation" id="iU1-28-1SX"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="detailDisclosureButton" indentationWidth="10" reuseIdentifier="exerciseTodayBaseline" textLabel="cr3-ch-3S5" style="IBUITableViewCellStyleDefault" id="Oei-zF-xX3">
+                                <rect key="frame" x="0.0" y="187.5" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Oei-zF-xX3" id="UhZ-ML-f7z">
+                                    <rect key="frame" x="0.0" y="0.0" width="307" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="T-Posing" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cr3-ch-3S5">
+                                            <rect key="frame" x="16" y="0.0" width="291" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="Vna-Si-YO2" kind="presentation" id="mwL-P4-UFj"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -320,5 +345,54 @@
             </objects>
             <point key="canvasLocation" x="-50" y="-209"/>
         </scene>
+        <!--Take Measurement Modal View Controller-->
+        <scene sceneID="wct-Kz-Bka">
+            <objects>
+                <viewController id="Gxc-q0-Q1S" customClass="TakeMeasurementModalViewController" customModule="FlexManager" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="F0Q-fq-JMJ">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="SyM-0G-Ysm">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please perform as many repetitions as possible for the next 30 seconds." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rr7-SR-biq">
+                                <rect key="frame" x="16" y="20" width="343" height="316"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This screen will automatically dismiss after the test is complete." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="61q-AT-tmD">
+                                <rect key="frame" x="16" y="331" width="343" height="316"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="61q-AT-tmD" firstAttribute="top" secondItem="2Cd-CL-B37" secondAttribute="top" constant="311" id="40L-40-4Ra"/>
+                            <constraint firstItem="2Cd-CL-B37" firstAttribute="bottom" secondItem="rr7-SR-biq" secondAttribute="bottom" constant="331" id="6E4-zJ-lGE"/>
+                            <constraint firstItem="61q-AT-tmD" firstAttribute="leading" secondItem="F0Q-fq-JMJ" secondAttribute="leadingMargin" id="EBn-AX-N0l"/>
+                            <constraint firstItem="61q-AT-tmD" firstAttribute="centerX" secondItem="SyM-0G-Ysm" secondAttribute="centerX" id="JIj-Ke-xyj"/>
+                            <constraint firstItem="SyM-0G-Ysm" firstAttribute="top" secondItem="2Cd-CL-B37" secondAttribute="top" id="LDR-fO-XnK"/>
+                            <constraint firstItem="2Cd-CL-B37" firstAttribute="trailing" secondItem="SyM-0G-Ysm" secondAttribute="trailing" id="OpE-E4-XhT"/>
+                            <constraint firstItem="rr7-SR-biq" firstAttribute="top" secondItem="2Cd-CL-B37" secondAttribute="top" id="UJM-ot-LHF"/>
+                            <constraint firstItem="61q-AT-tmD" firstAttribute="leading" secondItem="rr7-SR-biq" secondAttribute="leading" id="UaA-b5-4dg"/>
+                            <constraint firstItem="SyM-0G-Ysm" firstAttribute="leading" secondItem="2Cd-CL-B37" secondAttribute="leading" id="X6E-SF-XkO"/>
+                            <constraint firstItem="61q-AT-tmD" firstAttribute="trailing" secondItem="rr7-SR-biq" secondAttribute="trailing" id="bFW-s5-YYA"/>
+                            <constraint firstAttribute="bottom" secondItem="61q-AT-tmD" secondAttribute="bottom" constant="20" symbolic="YES" id="xRS-aB-OE8"/>
+                            <constraint firstItem="2Cd-CL-B37" firstAttribute="bottom" secondItem="SyM-0G-Ysm" secondAttribute="bottom" id="yRt-ia-mNB"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="2Cd-CL-B37"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tda-0m-GQ4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1839" y="-650"/>
+        </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="mwL-P4-UFj"/>
+    </inferredMetricsTieBreakers>
 </document>
