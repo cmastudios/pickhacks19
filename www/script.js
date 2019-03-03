@@ -10,76 +10,60 @@ var config = {
 
 firebase.initializeApp(config);
 
-//temp data from "exercise": "arm"
 
-// var data = {
-//   "history" : {
-//     "7689798273432" : {
-//       "measurement" : 20,
-//       "baseline" : true,
-//       "completed" : true,
-//       "measured_at" : 7689798273
-//     },
-//     "8689798273432" : {
-//       "measurement" : 20,
-//       "baseline" : true,
-//       "completed" : true,
-//       "measured_at" : 86897982
-//     },
-//     "9689798273432" : {
-//       "measurement" : 30,
-//       "baseline" : true,
-//       "completed" : true,
-//       "measured_at" : 9689798273432
-//     },
-//     "9789798273432" : {
-//       "measurement" : 35,
-//       "baseline" : true,
-//       "completed" : true,
-//       "measured_at" : 9789798273432
-//     },
-//     "9789798273433" : {
-//       "measurement" : 37,
-//       "baseline" : true,
-//       "completed" : true,
-//       "measured_at" : 9789798273433
-//     },
-//     "9789798273434" : {
-//       "measurement" : 30,
-//       "baseline" : true,
-//       "completed" : true,
-//       "measured_at" : 9789798273434
-//     },
-//     "9789798273435" : {
-//       "measurement" : 34,
-//       "baseline" : true,
-//       "completed" : true,
-//       "measured_at" : 9789798273435
-//     }
-//   },
-//   "goal" : 90
-// };
+//script for sendData.html
 
-firebase.database().ref("/users/j2XI6lPPZMXcltQWMGbZUh9fPn33/doctor").on('value', function(snapshot) {
-  console.log(snapshot.exists());
-  if (snapshot.exists()) {
-    document.getElementById("doctor").innerText = snapshot.val();
-  }
-});
-
-firebase.database().ref("/users/j2XI6lPPZMXcltQWMGbZUh9fPn33/exercises").on('value', function(snapshot) {
-  snapshot.forEach(function (childSnap) {
-    if (childSnap.exists()) {
-      updateTable(childSnap.key, childSnap.val());
+var sendData = document.getElementsByClassName("doctor");
+if (sendData) {
+  console.log("hey");
+  firebase.database().ref("/users/j2XI6lPPZMXcltQWMGbZUh9fPn33").on('value', function(snapshot) {
+    if (snapshot.val()["doctor"] != null) {
+      for (let element of document.getElementsByClassName("doctor")) {
+        console.log(element);
+        element.innerText = snapshot.val()["doctor"];
+      }
     }
   });
-});
+}
+
+
+//script for progress.html
+
+var progress = document.getElementById("armStartDate");
+if (progress) {
+  firebase.database().ref("/users/j2XI6lPPZMXcltQWMGbZUh9fPn33/exercises").on('value', function(snapshot) {
+    snapshot.forEach(function (childSnap) {
+      if (childSnap.exists()) {
+        updateTable(childSnap.key, childSnap.val());
+      }
+    });
+  });
+}
+
+
+//script for graphs
+
+var armGraph = document.getElementById("armChart");
+var legGraph = document.getElementById("legChart");
+var backGraph = document.getElementById("backChart");
+if (armGraph) {
+  getData("arm", armGraph);
+}
+else if (legGraph) {
+  getData("leg", legGraph);
+}
+else if (backGraph) {
+  getData("back", backGraph);
+}
+
+
+//functions used
 
 function updateTable(bodyPart, data) {
   var keys = Object.keys(data["history"]);
 
   var startDate;
-  if (keys.length != 0) {
+  if (keys.length != 0 && data["history"][keys[0]]["complete"]) {
     var date = new Date(1000*data["history"][keys[0]]["measured_at"]);
     startDate = date.getMonth() + 1 + "/" + date.getDay() + "/" + (1900 + date.getYear());
   }
@@ -97,7 +81,7 @@ function updateTable(bodyPart, data) {
       initBaseline = data["history"][date]["measurement"];
       break;
     }
-    else if (data["history"][date]["complete"] == false) {
+    else if (!data["history"][date]["complete"]) {
       break;
     }
   }
@@ -105,22 +89,30 @@ function updateTable(bodyPart, data) {
 
   var currBaseline = "no recorded baseline";
   for (var date in data["history"]) {
-    if (data["history"][date]["complete"] == true && data["history"][date]["baseline"] == true) {
-      currBaseline = data["history"][date]["measurement"];
+    if (data["history"][date]["complete"] && data["history"][date]["baseline"]) {
+      currBaseline = Math.round(data["history"][date]["measurement"]);
     }
   }
   document.getElementById(bodyPart + "CurrBaseline").innerText = currBaseline;
 
-  var numReps = keys.length;
+  var numReps = 0;
+  for (var date in data["history"]) {
+    if (data["history"][date]["complete"]) {
+      numReps++;
+    }
+    else {
+      break;
+    }
+  }
   document.getElementById(bodyPart + "NumReps").innerText = numReps;
 
   var currentImprovement = "no data yet";
   var derivs = [];
   for (var i = 1; i < keys.length; i++) {
-    if (data["history"][keys[i]]["complete"] == false) {
+    if (!data["history"][keys[i]]["complete"]) {
       break;
     }
-    if (data["history"][keys[i]]["baseline"] == true) {
+    if (data["history"][keys[i]]["baseline"]) {
       derivs.push(data["history"][keys[i]]["measurement"]
                 - data["history"][keys[i-1]]["measurement"]);
     }
@@ -136,20 +128,78 @@ function updateTable(bodyPart, data) {
       currentImprovement = "100%";
     }
     else {
-      currentImprovement = 100 * derivsAvg / (data["goal"] - initBaseline) + "%";
+      currentImprovement = Math.round(100 * derivsAvg / (data["goal"] - initBaseline)) + "%";
     }
   }
   document.getElementById(bodyPart + "CurrentImprovement").innerText = currentImprovement;
 
   var overallImprovement = "no data yet";
-  if (keys.length != 0) {
+  if (keys.length != 0 && data["history"][keys[0]]["complete"]) {
     if (data["goal"] - initBaseline == 0) {
       overallImprovement = "100%";
     }
     else {
-      overallImprovement = (currBaseline - initBaseline) / (data["goal"] - initBaseline) + "%";
+      overallImprovement = Math.round((currBaseline - initBaseline) / (data["goal"] - initBaseline)) + "%";
     }
   }
-  console.log(overallImprovement);
   document.getElementById(bodyPart + "OverallImprovement").innerText = overallImprovement;
+}
+
+function getData(bodyPart, graph) {
+  firebase.database().ref("/users/j2XI6lPPZMXcltQWMGbZUh9fPn33/exercises/" + bodyPart + "/history").on('value', function(snapshot) {
+    var x = [];
+    var y = [];
+    snapshot.forEach(function (element) {
+      element = element.val();
+      console.log(element);
+      if (element["complete"]) {
+        x.push(element["measured_at"]);
+        y.push(element["measurement"]);
+      }
+    });
+    console.log(x);
+    console.log(y);
+    buildGraph(bodyPart, graph, x, y);
+  });
+}
+
+function buildGraph(bodyPart, graph, x, y) {
+  var ctx = graph.getContext('2d');
+  var chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: x,
+      datasets: [
+        {
+          backgroundColor: "rgb(255, 99, 132)",
+          borderColor: "rgb(255, 99, 132)",
+          fill: false,
+          data: y,
+          lineTension: 0
+        }
+      ]
+    },
+    options: {
+      xAxes: [
+        {
+          type: 'time',
+          ticks: {
+            autoSkip: true,
+            maxTicksLimit: 20
+          }
+        }
+      ],
+      title: {
+        text: bodyPart + " motion range over time",
+        display: true,
+        fontSize: 20
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
 }

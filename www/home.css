@@ -17,33 +17,38 @@
 
 
 #thephone {
-   display: block;
+  display: block;
   margin-left: auto;
   margin-right: auto;
- 
+
 }
 .lightbox{
-    -webkit-stroke-width: 5.3px;
-      -webkit-stroke-color: #FFFFFF;
-      -webkit-fill-color: #FFFFFF;
-      text-shadow: 1px 0px 20px yellow;
+  -webkit-stroke-width: 5.3px;
+  -webkit-stroke-color: #FFFFFF;
+  -webkit-fill-color: #FFFFFF;
+  text-shadow: 1px 0px 20px yellow;
 }
+
 .relative {
   position: relative;
 }
+
 .child {
   position: absolute;
 }
+
 .alignleft {
   float: left;
   font-family: 'Mukta', sans-serif;
   padding:  = 33%
 }
+
 .alignright {
   float: right;
   font-family: 'Mukta', sans-serif;
   padding = 33%
 }
+
 
 #flexmandiv {
   background-color = white;
@@ -55,9 +60,9 @@
  margin-left: auto;
  margin-right: auto;
  width:auto;
- height:600px; 
+ height:600px;
  line-height: 600px;
-padding-top: 75px;
+ padding-top: 75px;
 }
 
 .container {
@@ -71,8 +76,9 @@ padding-top: 75px;
  margin-left: auto;
  margin-right: auto;
  width: auto;
- height: 700px; 
+ height: 700px;
 }
+
 #whatisflexheader {
   position: absolute;
   top: 50%;
@@ -91,7 +97,6 @@ padding: 5%;
 
 #missionstatement {
   text-align: center;
-
   font-family: 'Mukta', sans-serif;
 }
 
