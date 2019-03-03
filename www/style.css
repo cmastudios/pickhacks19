@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(200,200,200);
+  background-color: rgb(225,225,225);
   font-family: "bookman";
 }
 
@@ -53,7 +53,7 @@ a:hover {
   height: 400px;
   border: solid black 1px;
   border-radius: 5px;
-  background-color: #80c27d;
+  background-color: rgb(204,255,204);
   float: left;
 }
 
